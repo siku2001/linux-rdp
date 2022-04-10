@@ -1,0 +1,24 @@
+name: server
+
+on: workflow_dispatch
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: install ssh
+      run: sudo apt install openssh-server -y
+    - name: remove ssh from firewall
+      run: sudo ufw allow ssh
+    - name: start ssh server
+      run: sudo systemctl start ssh
+    - name: install ngrok
+      run: sudo snap install ngrok
+    - name: auth ngrok
+      run: ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+    - name: creating user
+      run: sudo useradd -m -s /bin/bash user; sudo usermod -aG sudo user; echo "user:toor" | sudo chpasswd 
+    - name: start ngrok
+      run: ngrok tcp 22
